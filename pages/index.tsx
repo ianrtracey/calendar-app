@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Text, Checkbox, Drawer } from '@geist-ui/react'
 import _ from 'lodash'
 
-const EventItem = ({ event }) => {
+const EventItem = ({ event }: { event: any }) => {
   const title =
     event.summary.length < 30
       ? event.summary
