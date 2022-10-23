@@ -1,61 +1,60 @@
 import styles from '../styles/Home.module.css'
+import { Button, Dropdown, Input } from 'semantic-ui-react'
+import { useEffect, useState } from 'react'
+import { Text, Checkbox, Drawer } from '@geist-ui/react'
+import _ from 'lodash'
 
-export default function Home() {
+const EventItem = ({ event }) => {
+  const title =
+    event.summary.length < 30
+      ? event.summary
+      : event.summary.slice(0, 30) + '...'
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+    <Text b style={{ margin: 0, padding: 0 }}>
+      {`${title} (${event.duration}m)`}
+    </Text>
+  )
+}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+export default function Home () {
+  const [events, setEvents] = useState([])
+  const [stickyFooterOpen, setFooterOpen] = useState(true)
+  useEffect(() => {
+    fetch('/api/calendar').then(resp =>
+      resp.json().then(data => {
+        setEvents(data.events)
+      })
+    )
+  }, [])
+  console.log(events)
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+  return (
+    <div
+      style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '100px',
+        padding: '20px',
+        height: '500px',
+        overflow: 'scroll'
+      }}
+    >
+      <div>
+        <div style={{ display: 'flex' }}>
+          <div>Events</div>
+          <div>Events</div>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+        <div>
+          {events &&
+            events.map(event => (
+              <div>
+                <Checkbox scale={3} checked={false} />
+                <EventItem event={event} />
+              </div>
+            ))}
+        </div>
+      </div>
     </div>
   )
 }
